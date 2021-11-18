@@ -1,0 +1,1395 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Documentação API Prometheus",
+    "description": "Esta documentação tem por finalidade auxiliar a integração entre APIs e facilitar a usabilidade da plataforma Prometheus.  <h1>Recursos disponíveis</h1> <p>Atualmente existem os seguintes recursos abaixo que você pode manipular através dos métodos <b>GET, POST, PUT </b>e<b> DELETE</b>.</p> <ul><li>Autenticação</li><li>Cursos</li><li>Clientes</li><li>Consultores</li></ul>. <h1>Tratamento de dados</h1> <p>Todos os dados enviados e recebidos pela API estão/deverão ser em formato JSON (application/json).</p> <h1>Endpoint</h1> <p>O endpoint de conexão com a API REST JSON da Prometeus é <code><span>https://prometheusapi.herokuapp.com/v1.0/</span></code></p>",
+    "contact": {
+      "name": "Developers",
+      "email": "fabiotozoni@gmail.com",
+      "url": "https://github.com/Prometheushub5/backend"
+    },
+    "license": {
+      "name": "License",
+      "url": "https://github.com/Prometheushub5/backend"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://prometheusapi.herokuapp.com/v1.0/",
+      "description": "Production"
+    },
+    {
+      "url": "https://qa-prometheusapi.herokuapp.com/v1.0/",
+      "description": "Testing"
+    },
+    {
+      "url": "https://dev-prometheusapi.herokuapp.com/v1.0/",
+      "description": "Development"
+    }
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "summary": "Rota para autenticação de consultores",
+        "description": "Para usar a API Prometheus para ler e gravar recursos em nome de um usuário (consultor), você deve obter um token de acesso da plataforma de identidade e anexá-lo às solicitações que ele envia para a API. O fluxo de concessão de código de autorização é um fluxo comum usado por aplicativos nativos e móveis e também por alguns aplicativos Web.O resultado que você deverá enviar no HEADER de todas as requisições que requerem autenticação será semelhante a:<br/> <code>Authorization: Bearer d2JfdXN1YXJpbzp3Yl9zZW5oYQ</code>",
+        "tags": [
+          "Autorização"
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "A autenticação é realizada pelo servidor. A solicitação devera conter no corpo um e-mail válido e senha.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resposta em caso de sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/login_response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Formato da solicitação incorreto.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cursos": {
+      "get": {
+        "summary": "Listar todos cursos cadastrados",
+        "description": "Lista todos os cursos cadastrados. Pode utilizar <i>querystring</i> para controlar os resultados.</br> Caso os parâmetros sejam omitidos, retorna primeira página com três resultados.",
+        "tags": [
+          "Cursos"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Quantidade de itens apresentados na resposta. <b>Max = 100 Min = 1 Default = 3.</b>",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Retorna uma pagina especifica da lista de cursos, caso seja omitido retorna a primeira página. <b> Min = 1</b>",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cursos"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar um novo curso",
+        "tags": [
+          "Cursos"
+        ],
+        "description": "Endpoint para criação de novos cursos. A requisição deverá seguir o <i>Schema</i>.</br><b>Necessário autenticação</b>.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/novo_curso"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/curso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/cursos/{id}": {
+      "get": {
+        "summary": "Informações de um curso específico",
+        "description": "Para listar um curso você precisa informar na URL do endpoint um {<b>id</b>} de curso válido.",
+        "tags": [
+          "Cursos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id de curso",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/curso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Atualiza dados de um curso existente",
+        "description": "Atualiza dados de um curso já cadastrado.Para alterar um curso você precisa informar na URL do endpoint um {<b>id</b>} de curso válido.</br><b>Necessário autenticação</b>.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id do curso",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/put_curso"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/curso"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Exclui um curso cadastrado",
+        "description": "Exclui um curso previamente cadastrado. Atenção todos os clientes com interesse no curso excluido ficaram com <i>curso_id</i> em vazio.</br>Para excluir um curso você precisa informar na URL do endpoint um {<b>id</b>} de curso válido.</br><b>Necessário autenticação</b>.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id do curso",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/delete"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/clientes": {
+      "post": {
+        "summary": "Criar um cliente",
+        "description": "Endpoint para criação de novos clientes. A requisição deverá seguir o <i>Schema</i>.",
+        "tags": [
+          "Clientes"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/novo_cliente"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cliente"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados já cadastrados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/422"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Listar os clientes",
+        "description": "Lista todos os clientes cadastrados. Pode utilizar <i>querystring</i> para controlar os resultados.</br> Caso os parâmetros sejam omitidos, retorna primeira página com três resultados, independente do status.</br><b>Necessário autenticação</b>.",
+        "tags": [
+          "Clientes"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Quantidade de itens apresentados na resposta. <b>Max = 100 Min = 1 Default = 3.</b>",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Retorna uma pagina especifica da lista de cursos, caso seja omitido retorna a primeira página. <b> Min = 1</b>",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Retorna todos os clientes com o status.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NOVO",
+                "EM_ATENDIMENTO",
+                "CONTRATADO",
+                "DESISTENTE"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/lista_cliente"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/clientes/{id}": {
+      "get": {
+        "summary": "Informação de um cliente específico",
+        "description": "Para visualizar um cliente você precisa informar na URL do endpoint um {<b>id</b>} de cliente válido.</br><b>Necessário autenticação.</b>",
+        "tags": [
+          "Clientes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id do cliente",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/cliente"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Clientes"
+        ],
+        "summary": "Atualiza o status de um cliente existente",
+        "description": "Atualiza o status de um cliente cadastrado.Para alterar o status um cliente você precisa informar na URL do endpoint um {<b>id</b>} de cliente válido. No corpo da requisição devera conter o novo status, conforme <i>Schema</i>.</br><b>Necessário autenticação</b>.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id do cliente",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/novo_status"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/novo_status_response"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Clientes"
+        ],
+        "summary": "Exclui um cliente",
+        "description": "Exclui um cliente previamente cadastrado. </br>Atenção, esta ação não pode ser desfeita!.</br>Para excluir um cliente você precisa informar na URL do endpoint um {<b>id</b>} de cliente válido.</br><b>Necessário autenticação</b>.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id do cliente",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/delete"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/consultores": {
+      "post": {
+        "summary": "Criar consultor",
+        "description": "Endpoint para criação de novos consultores. A requisição deverá seguir o <i>Schema</i>.</br><b>Necessário autenticação</b>.",
+        "tags": [
+          "Consultores"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/novo_consultor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/consultor"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dados já cadastrados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/422"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Consultores"
+        ],
+        "summary": "Atualiza dados do consultor logado",
+        "description": "Atualiza dados do consultor logado. No corpo da requisição devera conter os novos dados, conforme <i>Schema</i>.</br>Em caso de troca de senha, os campos <i> senhaAntiga, senha e senhaConfirma</i> são <b>obrigatórios!</b></br><b>Necessário autenticação</b>.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/update_consultor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/consultor"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Listar os consultores",
+        "description": "Lista todos os consultores cadastrados. Pode utilizar <i>querystring</i> para controlar os resultados.</br> Caso os parâmetros sejam omitidos, retorna primeira página com três resultados, independente do status.</br><b>Necessário autenticação</b>.",
+        "tags": [
+          "Consultores"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Quantidade de itens apresentados na resposta. <b>Max = 100 Min = 1 Default = 3.</b>",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Retorna uma pagina especifica da lista de cursos, caso seja omitido retorna a primeira página. <b> Min = 1</b>",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/lista_cliente"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/consultores/{id}": {
+      "get": {
+        "summary": "Informação de um consultor específico",
+        "description": "Para visualizar um consultor você precisa informar na URL do endpoint um {<b>id</b>} de consultor válido.</br><b>Necessário autenticação.</b>",
+        "tags": [
+          "Consultores"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id do consultor",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/consultor"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Consultores"
+        ],
+        "summary": "Exclui um consultor",
+        "description": "Exclui um consultor previamente cadastrado. </br>Atenção, esta ação não pode ser desfeita!.</br>Para excluir um consultor você precisa informar na URL do endpoint um {<b>id</b>} de consultor válido.</br><b>Necessário autenticação</b>.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "id",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/delete"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Solicitação inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "400": {
+        "type": "object",
+        "properties": {
+          "Mensagem": {
+            "type": "string",
+            "example": "Solicitação inválida."
+          }
+        }
+      },
+      "422": {
+        "type": "object",
+        "properties": {
+          "Mensagem": {
+            "type": "string",
+            "example": "Já cadastrado."
+          }
+        }
+      },
+      "cursos": {
+        "type": "object",
+        "properties": {
+          "pagina": {
+            "type": "number",
+            "example": 1
+          },
+          "cursos": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "description": "id do curso",
+                "example": 1
+              },
+              "nome": {
+                "type": "string",
+                "description": "Nome do curso",
+                "example": "Nome"
+              },
+              "nivel_ensino": {
+                "type": "string",
+                "example": "GRADUAÇÃO",
+                "enum": [
+                  "LATO SENSU",
+                  "FORMAÇÃO COMPLEMENTAR",
+                  "GRADUAÇÃO",
+                  "DOUTORADO",
+                  "TÉCNICO",
+                  "RESIDÊNCIA",
+                  "MESTRADO",
+                  "FUNDAMENTAL",
+                  "TÉCNICO INTEGRADO",
+                  "MÉDIO",
+                  "INFANTIL"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "curso": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "id do curso",
+            "example": 1
+          },
+          "nome": {
+            "type": "string",
+            "description": "Nome do curso",
+            "example": "Nome"
+          },
+          "nivel_ensino": {
+            "type": "string",
+            "example": "GRADUAÇÃO",
+            "enum": [
+              "LATO SENSU",
+              "FORMAÇÃO COMPLEMENTAR",
+              "GRADUAÇÃO",
+              "DOUTORADO",
+              "TÉCNICO",
+              "RESIDÊNCIA",
+              "MESTRADO",
+              "FUNDAMENTAL",
+              "TÉCNICO INTEGRADO",
+              "MÉDIO",
+              "INFANTIL"
+            ]
+          },
+          "grau_academico": {
+            "type": "string",
+            "example": "BACHARELADO",
+            "enum": [
+              "BACHARELADO",
+              "LICENCIATURA",
+              "TECNOLÓGICO"
+            ]
+          },
+          "modalidade": {
+            "example": "PRESENCIAL",
+            "type": "string",
+            "enum": [
+              "PRESENCIAL",
+              "SEMI-PRESENCIAL",
+              "REMOTO"
+            ]
+          },
+          "unidade": {
+            "example": "Unidade 1",
+            "type": "string"
+          },
+          "consultor_id": {
+            "description": "id do consultor que criou/ou modificou o curso",
+            "example": 1,
+            "type": "string"
+          },
+          "created_at": {
+            "description": "TimeStamp de criação do curso",
+            "example": "2021-10-01T19:33:55.876Z",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "TimeStamp de modificação do curso",
+            "example": "2021-10-01T19:33:55.876Z",
+            "type": "string"
+          }
+        }
+      },
+      "novo_curso": {
+        "type": "object",
+        "required": [
+          "nome",
+          "nivel_ensino",
+          "modalidade",
+          "unidade"
+        ],
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "Nome do novo curso",
+            "example": "Nome"
+          },
+          "nivel_ensino": {
+            "type": "string",
+            "enum": [
+              "LATO SENSU",
+              "FORMAÇÃO COMPLEMENTAR",
+              "GRADUAÇÃO",
+              "DOUTORADO",
+              "TÉCNICO",
+              "RESIDÊNCIA",
+              "MESTRADO",
+              "FUNDAMENTAL",
+              "TÉCNICO INTEGRADO",
+              "MÉDIO",
+              "INFANTIL"
+            ]
+          },
+          "grau_academico": {
+            "type": "string",
+            "enum": [
+              "BACHARELADO",
+              "LICENCIATURA",
+              "TECNOLÓGICO"
+            ]
+          },
+          "modalidade": {
+            "type": "string",
+            "enum": [
+              "PRESENCIAL",
+              "SEMI-PRESENCIAL",
+              "REMOTO"
+            ]
+          },
+          "unidade": {
+            "type": "string",
+            "example": "Unidade"
+          }
+        }
+      },
+      "put_curso": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string"
+          },
+          "nivel_ensino": {
+            "type": "string",
+            "enum": [
+              "LATO SENSU",
+              "FORMAÇÃO COMPLEMENTAR",
+              "GRADUAÇÃO",
+              "DOUTORADO",
+              "TÉCNICO",
+              "RESIDÊNCIA",
+              "MESTRADO",
+              "FUNDAMENTAL",
+              "TÉCNICO INTEGRADO",
+              "MÉDIO",
+              "INFANTIL"
+            ]
+          },
+          "grau_academico": {
+            "type": "string",
+            "enum": [
+              "BACHARELADO",
+              "LICENCIATURA",
+              "TECNOLÓGICO"
+            ]
+          },
+          "modalidade": {
+            "type": "string",
+            "enum": [
+              "PRESENCIAL",
+              "SEMI-PRESENCIAL",
+              "REMOTO"
+            ]
+          },
+          "unidade": {
+            "type": "string"
+          }
+        }
+      },
+      "delete": {
+        "type": "object",
+        "properties": {
+          "Mensagem": {
+            "type": "string",
+            "example": "Excluido!"
+          }
+        }
+      },
+      "novo_cliente": {
+        "type": "object",
+        "required": [
+          "nome",
+          "cpf",
+          "email",
+          "telefone",
+          "whats",
+          "curso_id"
+        ],
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Jackie Chan"
+          },
+          "cpf": {
+            "type": "string",
+            "example": "999.999.999-99"
+          },
+          "cep": {
+            "type": "string",
+            "example": "00000-000"
+          },
+          "logradouro": {
+            "example": "Rua dos bobos",
+            "type": "string"
+          },
+          "numero": {
+            "type": "string",
+            "example": 0
+          },
+          "bairro": {
+            "type": "string",
+            "example": "Onde Judas perdeu as Botas"
+          },
+          "cidade": {
+            "type": "string",
+            "example": "Onde o vento faz a curva"
+          },
+          "uf": {
+            "type": "string",
+            "example": "PR"
+          },
+          "email": {
+            "type": "string",
+            "example": "email@servidor.com"
+          },
+          "telefone": {
+            "type": "string",
+            "example": "8650 4006"
+          },
+          "whats": {
+            "type": "string",
+            "example": "8650 4006"
+          },
+          "curso_id": {
+            "type": "string",
+            "example": 10,
+            "description": "Id do curso de interesse"
+          }
+        }
+      },
+      "cliente": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Jackie Chan"
+          },
+          "cpf": {
+            "type": "string",
+            "example": "999.999.999-99"
+          },
+          "cep": {
+            "type": "string",
+            "example": "00000-000"
+          },
+          "logradouro": {
+            "example": "Rua dos bobos",
+            "type": "string"
+          },
+          "numero": {
+            "type": "string",
+            "example": 0
+          },
+          "bairro": {
+            "type": "string",
+            "example": "Onde Judas perdeu as Botas"
+          },
+          "cidade": {
+            "type": "string",
+            "example": "Onde o vento faz a curva"
+          },
+          "uf": {
+            "type": "string",
+            "example": "PR"
+          },
+          "email": {
+            "type": "string",
+            "example": "email@servidor.com"
+          },
+          "telefone": {
+            "type": "string",
+            "example": "8650 4006"
+          },
+          "whats": {
+            "type": "string",
+            "example": "8650 4006"
+          },
+          "curso_id": {
+            "type": "string",
+            "example": 10,
+            "description": "Id do curso de interesse"
+          },
+          "status": {
+            "type": "string",
+            "example": "EM_ATENDIMENTO",
+            "enum": [
+              "EM_ATENDIMENTO",
+              "CONTRATADO",
+              "DESISTENTE"
+            ]
+          },
+          "consultor_id": {
+            "type": "string",
+            "example": null,
+            "description": "Id do consulto que atendeu o cliente"
+          },
+          "created_at": {
+            "description": "TimeStamp de criação do curso",
+            "example": "2021-10-01T19:33:55.876Z",
+            "type": "string"
+          },
+          "updated_at": {
+            "description": "TimeStamp de modificação do curso",
+            "example": "2021-10-01T19:33:55.876Z",
+            "type": "string"
+          }
+        }
+      },
+      "lista_cliente": {
+        "type": "object",
+        "properties": {
+          "pagina": {
+            "type": "string",
+            "example": 1
+          },
+          "clientes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "nome": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            },
+            "example": [
+              {
+                "id": 1,
+                "nome": "João sem braço",
+                "status": "NOVO"
+              },
+              {
+                "id": 2,
+                "nome": "John Doe",
+                "status": "DESISTENTE"
+              }
+            ]
+          }
+        }
+      },
+      "novo_status": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "EM_ATENDIMENTO",
+              "CONTRATADO",
+              "DESISTENTE"
+            ]
+          }
+        }
+      },
+      "novo_status_response": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Jhin"
+          },
+          "id": {
+            "type": "number",
+            "example": 4
+          },
+          "consultor": {
+            "type": "string",
+            "example": "Camille"
+          },
+          "status": {
+            "type": "string",
+            "example": "NOVO"
+          }
+        }
+      },
+      "novo_consultor": {
+        "type": "object",
+        "required": [
+          "nome",
+          "email",
+          "whats",
+          "senha"
+        ],
+        "properties": {
+          "nome": {
+            "type": "string",
+            "example": "Yasuo"
+          },
+          "email": {
+            "type": "string",
+            "example": "Yasuo@ionia.com"
+          },
+          "whats": {
+            "type": "string",
+            "example": 999999999
+          },
+          "senha": {
+            "type": "string",
+            "example": "*******"
+          }
+        }
+      },
+      "consultor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "0/10"
+          },
+          "nome": {
+            "type": "string",
+            "example": "Yasuo"
+          },
+          "email": {
+            "type": "string",
+            "example": "yasuo@ionia.com"
+          }
+        }
+      },
+      "update_consultor": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "email@servidor.com"
+          },
+          "senhaAntiga": {
+            "type": "string",
+            "example": "senha_antiga"
+          },
+          "senha": {
+            "type": "string",
+            "example": "senha_nova"
+          },
+          "senhaConfirma": {
+            "type": "string",
+            "example": "senha_nova"
+          }
+        }
+      },
+      "login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "email@servidor.com",
+            "description": "E-mail cadastrado"
+          },
+          "senha": {
+            "type": "string",
+            "example": "senha"
+          }
+        }
+      },
+      "login_response": {
+        "type": "object",
+        "properties": {
+          "consultor": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "description": "id única"
+              },
+              "nome": {
+                "type": "string",
+                "description": "Nome do consultor",
+                "example": "Nome"
+              },
+              "email": {
+                "type": "string",
+                "example": "email@servidor.com",
+                "description": "e-mail do consultor"
+              },
+              "whats": {
+                "type": "string",
+                "example": 11999999999,
+                "description": "WhatsApp do consultor"
+              }
+            }
+          },
+          "token": {
+            "type": "string",
+            "description": "Token de acesso",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibm9tZSI6Ik1BU1RFUiIsImVtYWlsIjoiZmFiaW90b3pvbmlAZ21haWwuY29tIiwiaWF0IjoxNjMzMzEwMDUzLCJleHAiOjE2MzM0ODI4NTN9.AeEgso92"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
