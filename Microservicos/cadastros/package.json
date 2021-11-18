@@ -1,0 +1,39 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Update cursos #FEITO Update de senha #FEITO update de status de cliente (novo, em atendimento)#FEITO Criar relacionamento de consultor para cliente (1 consultor para muitos clientes)#FEITO Criar coluna na tabela clientes para receber consultor(atendente);#FEITO Atualizar controleCliente com YUP#FEITO listar clientes por data de criação#FEITO Não poderá existir um NOVO contato com mesmo CPF  (UPDATE NA TABELA, UPDATE NA MODEL, TRATAR ERRO SE NÃO FOR UNICO NO CONTROLER)#OK O campos: CPF, Nome, Telefone, Whatsapp e Email são obrigatórios: #FEITO (OS OUTROS ITENS NÃO SÃO OBRIGATÓRIOS, CORRIGIR TABELA MODEL E CONTROLLER) {     TABELA{         CPF:OK         NOME:OK         TELEFONE:OK,         WHATS:OK,         EMAIL:OK     }     MODEL{         CPF:OK         NOME:OK         TELEFONE:OK,         WHATS:OK,         EMAIL:OK     }     CONTROLER{         CPF:OK         NOME:OK         TELEFONE:OK,         WHATS:OK,         EMAIL:OK     } } No preenchimento do formulário, também será obrigatório informar o curso de preferência  (TABELA ESTÁ OK(PODE SER NULO), O TRATAMENTO TERA QUE SER FEITO NA CONTROLLER DE CLIENTES)#FEITO. Cada novo contato será criado com status = NOVO (ver requisito Plus+)#FEITO",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server",
+    "start": "node build/server.js",
+    "build": "sucrase ./src -d ./build --transforms imports"
+  },
+  "keywords": [],
+  "author": "Fabio Tozoni",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.10",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
+    "yup": "^0.32.9"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12",
+    "sucrase": "^3.20.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Prometheushub5/backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Prometheushub5/backend/issues"
+  },
+  "homepage": "https://github.com/Prometheushub5/backend#readme"
+}
