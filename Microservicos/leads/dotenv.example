@@ -1,6 +1,0 @@
-PORT=3333
-DB_TYPE=postgress
-DB_HOST=host.com
-DB_USER=user
-DB_PASS=password
-DB_DEFAULT=db
